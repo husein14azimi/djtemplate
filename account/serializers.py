@@ -11,26 +11,26 @@ class CombinedUserPersonSerializer(serializers.ModelSerializer):
     birth_date = serializers.DateField(source='person.birth_date', allow_null=True)
     gender = serializers.CharField(source='person.gender', allow_null=True)
     updated_at = JalaliDateTimeField(source='person.updated_at', read_only=True)
+    profile_picture = serializers.ImageField(source='person.profile_picture')
 
     date_joined = JalaliDateTimeField(read_only=True)
-
     last_login = JalaliDateTimeField(read_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'phone_number', 'date_joined', 'last_login', 'bio', 'birth_date', 'gender', 'updated_at',]
+        fields = ['id', 'username', 'email', 'phone_number', 'date_joined', 'last_login', 'bio', 'birth_date', 'gender', 'updated_at', 'profile_picture',]
         read_only_fields = ['id', 'username', 'date_joined', 'last_login',]
 
     def update(self, instance, validated_data):
-        person_data = {}
-        for field in ['bio', 'birth_date', 'gender']:
-            if field in validated_data:
-                person_data[field] = validated_data.pop(field)
+        # Handle nested person data
+        person_data = validated_data.pop('person', {})
 
-        super().update(instance, validated_data)
+        # Update the user instance
+        instance = super().update(instance, validated_data)
 
+        # Update the person instance if it exists
+        person = instance.person
         if person_data:
-            person = instance.person
             for attr, value in person_data.items():
                 setattr(person, attr, value)
             person.save()
