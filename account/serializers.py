@@ -11,7 +11,7 @@ class CombinedUserPersonSerializer(serializers.ModelSerializer):
     birth_date = serializers.DateField(source='person.birth_date', allow_null=True)
     gender = serializers.CharField(source='person.gender', allow_null=True)
     updated_at = JalaliDateTimeField(source='person.updated_at', read_only=True)
-    profile_picture = serializers.ImageField(source='person.profile_picture')
+    profile_picture = serializers.ImageField(source='person.profile_picture', allow_null=True)
 
     date_joined = JalaliDateTimeField(read_only=True)
     last_login = JalaliDateTimeField(read_only=True)
