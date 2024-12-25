@@ -20,19 +20,3 @@ class CombinedUserPersonSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'email', 'phone_number', 'date_joined', 'last_login', 'bio', 'birth_date', 'gender', 'updated_at', 'profile_picture',]
         read_only_fields = ['id', 'username', 'date_joined', 'last_login',]
-
-    def update(self, instance, validated_data):
-        # Handle nested person data
-        person_data = validated_data.pop('person', {})
-
-        # Update the user instance
-        instance = super().update(instance, validated_data)
-
-        # Update the person instance if it exists
-        person = instance.person
-        if person_data:
-            for attr, value in person_data.items():
-                setattr(person, attr, value)
-            person.save()
-
-        return instance
