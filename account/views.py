@@ -4,6 +4,7 @@ from rest_framework import viewsets
 from rest_framework.mixins import RetrieveModelMixin, UpdateModelMixin
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from .serializers import CombinedUserPersonSerializer
 from django.contrib.auth import get_user_model
 
@@ -11,6 +12,8 @@ User  = get_user_model()
 
 class CombinedUserProfileViewSet(RetrieveModelMixin, UpdateModelMixin, viewsets.GenericViewSet):
     serializer_class = CombinedUserPersonSerializer
+    # additional: the permission was added by ai
+    permission_classes = [IsAuthenticated]
     
     def get_queryset(self):
         # Allow only the user or admin to access their profile
